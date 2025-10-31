@@ -42,6 +42,8 @@ export const documentSchema = z.object({
   Payload: z.any(),
   PDFContent: z.string().optional(),
   Last_updated: z.string().optional(),
+  Error: z.string().optional(),
+  FileName: z.string().optional(),
 });
 
 export type Document = z.infer<typeof documentSchema>;

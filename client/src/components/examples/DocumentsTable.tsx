@@ -8,9 +8,19 @@ export default function DocumentsTableExample() {
       YoozDocNum: "69",
       Type: "PurchaseCreditNotes",
       Status: "OPEN",
+      FileName: "credit_note_2025_001.pdf",
+      RefDoc: "credit_note_2025_001.pdf",
       Payload: {
         CardCode: "SFR000038",
-        DocTotal: "5231.47"
+        DocTotal: "5231.47",
+        DocumentLines: [
+          {
+            ItemCode: "PSE000003-003",
+            LineTotal: "5231.47",
+            Quantity: "15",
+            ItemDescription: "Product return credit"
+          }
+        ]
       },
       Last_updated: "2025-10-31T09:16:37.453676Z"
     },
@@ -19,9 +29,19 @@ export default function DocumentsTableExample() {
       YoozDocNum: "70",
       Type: "PurchaseInvoices",
       Status: "LOADED",
+      FileName: "invoice_2025_042.pdf",
+      RefDoc: "invoice_2025_042.pdf",
       Payload: {
         CardCode: "SFR000039",
-        DocTotal: "1234.56"
+        DocTotal: "1234.56",
+        DocumentLines: [
+          {
+            ItemCode: "PSE000004-001",
+            LineTotal: "1234.56",
+            Quantity: "8",
+            ItemDescription: "Office supplies"
+          }
+        ]
       },
       Last_updated: "2025-10-30T14:22:15.123456Z"
     },
@@ -30,9 +50,12 @@ export default function DocumentsTableExample() {
       YoozDocNum: "71",
       Type: "PurchaseInvoices",
       Status: "FAILED",
+      FileName: "invoice_2025_043.pdf",
+      RefDoc: "invoice_2025_043.pdf",
+      Error: "Validation error: CardCode is required but missing from document payload",
       Payload: {
-        CardCode: "SFR000040",
-        DocTotal: "789.12"
+        DocTotal: "789.12",
+        DocumentLines: []
       },
       Last_updated: "2025-10-29T11:45:33.987654Z"
     }

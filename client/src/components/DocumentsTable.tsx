@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit } from "lucide-react";
+import { Edit, Eye } from "lucide-react";
 import { StatusBadge } from "./StatusBadge";
 import { PayloadEditorDialog } from "./PayloadEditorDialog";
+import { DocumentDetailsDialog } from "./DocumentDetailsDialog";
 import { format } from "date-fns";
 import type { Document } from "@shared/schema";
 
@@ -14,6 +15,7 @@ interface DocumentsTableProps {
 
 export function DocumentsTable({ documents, onPayloadUpdate }: DocumentsTableProps) {
   const [editingDocument, setEditingDocument] = useState<Document | null>(null);
+  const [viewingDocument, setViewingDocument] = useState<Document | null>(null);
 
   const handleSavePayload = async (newPayload: any) => {
     if (editingDocument && onPayloadUpdate) {
@@ -28,6 +30,7 @@ export function DocumentsTable({ documents, onPayloadUpdate }: DocumentsTablePro
           <TableHeader>
             <TableRow>
               <TableHead className="font-medium text-muted-foreground">Document #</TableHead>
+              <TableHead className="font-medium text-muted-foreground">File Name</TableHead>
               <TableHead className="font-medium text-muted-foreground">Type</TableHead>
               <TableHead className="font-medium text-muted-foreground">Status</TableHead>
               <TableHead className="font-medium text-muted-foreground">Card Code</TableHead>
@@ -38,7 +41,7 @@ export function DocumentsTable({ documents, onPayloadUpdate }: DocumentsTablePro
           <TableBody>
             {documents.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                   No documents found
                 </TableCell>
               </TableRow>
@@ -47,6 +50,9 @@ export function DocumentsTable({ documents, onPayloadUpdate }: DocumentsTablePro
                 <TableRow key={doc._id} className="hover:bg-muted/50" data-testid={`row-document-${doc._id}`}>
                   <TableCell className="font-mono text-sm" data-testid="text-doc-number">
                     {doc.YoozDocNum}
+                  </TableCell>
+                  <TableCell className="text-sm max-w-[200px] truncate" data-testid="text-filename" title={doc.FileName || doc.RefDoc || "-"}>
+                    {doc.FileName || doc.RefDoc || "-"}
                   </TableCell>
                   <TableCell className="text-sm" data-testid="text-doc-type">
                     {doc.Type === "PurchaseInvoices" ? "Invoice" : "Credit Note"}
@@ -63,14 +69,26 @@ export function DocumentsTable({ documents, onPayloadUpdate }: DocumentsTablePro
                       : "-"}
                   </TableCell>
                   <TableCell>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => setEditingDocument(doc)}
-                      data-testid={`button-edit-${doc._id}`}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
+                    <div className="flex gap-1">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => setViewingDocument(doc)}
+                        data-testid={`button-details-${doc._id}`}
+                        title="View details"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => setEditingDocument(doc)}
+                        data-testid={`button-edit-${doc._id}`}
+                        title="Edit payload"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -88,6 +106,12 @@ export function DocumentsTable({ documents, onPayloadUpdate }: DocumentsTablePro
           documentId={editingDocument._id}
         />
       )}
+
+      <DocumentDetailsDialog
+        open={!!viewingDocument}
+        onOpenChange={(open) => !open && setViewingDocument(null)}
+        document={viewingDocument}
+      />
     </>
   );
 }
