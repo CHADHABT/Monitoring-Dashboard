@@ -64,12 +64,32 @@ export function AppSidebar({ tenants, selectedTenant, onTenantChange }: AppSideb
           <SidebarGroupContent className="px-2">
             <Select value={selectedTenant} onValueChange={onTenantChange}>
               <SelectTrigger data-testid="select-tenant">
-                <SelectValue placeholder="Select tenant" />
+                <SelectValue placeholder="Select tenant">
+                  {selectedTenant && tenants.find(t => t.id === selectedTenant) && (
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className={`w-2 h-2 rounded-full ${
+                          tenants.find(t => t.id === selectedTenant)?.status === 'connected' 
+                            ? 'bg-green-500' 
+                            : 'bg-gray-300'
+                        }`}
+                      />
+                      <span>{tenants.find(t => t.id === selectedTenant)?.name}</span>
+                    </div>
+                  )}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {tenants.map((tenant) => (
                   <SelectItem key={tenant.id} value={tenant.id}>
-                    {tenant.name}
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className={`w-2 h-2 rounded-full ${
+                          tenant.status === 'connected' ? 'bg-green-500' : 'bg-gray-300'
+                        }`}
+                      />
+                      <span>{tenant.name}</span>
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
