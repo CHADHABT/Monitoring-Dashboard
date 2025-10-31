@@ -71,7 +71,7 @@ export function AppSidebar({ tenants, selectedTenant, onTenantChange }: AppSideb
                         className={`w-2 h-2 rounded-full ${
                           tenants.find(t => t.id === selectedTenant)?.status === 'connected' 
                             ? 'bg-green-500' 
-                            : 'bg-gray-300'
+                            : 'bg-red-500'
                         }`}
                       />
                       <span>{tenants.find(t => t.id === selectedTenant)?.name}</span>
@@ -85,7 +85,7 @@ export function AppSidebar({ tenants, selectedTenant, onTenantChange }: AppSideb
                     <div className="flex items-center gap-2">
                       <div 
                         className={`w-2 h-2 rounded-full ${
-                          tenant.status === 'connected' ? 'bg-green-500' : 'bg-gray-300'
+                          tenant.status === 'connected' ? 'bg-green-500' : 'bg-red-500'
                         }`}
                       />
                       <span>{tenant.name}</span>
