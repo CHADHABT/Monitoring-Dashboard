@@ -38,13 +38,16 @@ export function DocumentFilters({ filters, onFilterChange }: DocumentFiltersProp
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search documents..."
+              placeholder="Doc #, File Name, Card Code..."
               value={filters.searchQuery}
               onChange={(e) => onFilterChange({ ...filters, searchQuery: e.target.value })}
               className="pl-9"
               data-testid="input-search-documents"
             />
           </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            Search by Document #, File Name, or Card Code
+          </p>
         </CardContent>
       </Card>
 

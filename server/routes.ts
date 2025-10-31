@@ -105,6 +105,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (search) {
           query.$or = [
             { YoozDocNum: { $regex: search, $options: 'i' } },
+            { FileName: { $regex: search, $options: 'i' } },
             { "Payload.CardCode": { $regex: search, $options: 'i' } },
             { "Payload.NumAtCard": { $regex: search, $options: 'i' } }
           ];
@@ -198,7 +199,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Statistics route
   app.get("/api/statistics", async (req, res) => {
     try {
-      const { connectionId } = req.query;
+      const { connectionId, dateFrom, dateTo } = req.query;
       
       if (!connectionId) {
         return res.status(400).json({ message: "connectionId is required" });
@@ -217,20 +218,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const db = client.db(connection.database);
         const collection = db.collection(connection.collection);
 
+        const dateFilter: any = {};
+        if (dateFrom || dateTo) {
+          dateFilter.Last_updated = {};
+          if (dateFrom) {
+            dateFilter.Last_updated.$gte = dateFrom;
+          }
+          if (dateTo) {
+            dateFilter.Last_updated.$lte = dateTo;
+          }
+        }
+
         const [totalCount, loadedCount, failedCount, openCount, invoiceStats, creditNoteStats] = await Promise.all([
-          collection.countDocuments(),
-          collection.countDocuments({ Status: "LOADED" }),
-          collection.countDocuments({ Status: "FAILED" }),
-          collection.countDocuments({ Status: "OPEN" }),
+          collection.countDocuments(dateFilter),
+          collection.countDocuments({ ...dateFilter, Status: "LOADED" }),
+          collection.countDocuments({ ...dateFilter, Status: "FAILED" }),
+          collection.countDocuments({ ...dateFilter, Status: "OPEN" }),
           collection.aggregate([
-            { $match: { Type: "PurchaseInvoices" } },
+            { $match: { Type: "PurchaseInvoices", ...dateFilter } },
             { $group: {
               _id: "$Status",
               count: { $sum: 1 }
             }}
           ]).toArray(),
           collection.aggregate([
-            { $match: { Type: "PurchaseCreditNotes" } },
+            { $match: { Type: "PurchaseCreditNotes", ...dateFilter } },
             { $group: {
               _id: "$Status",
               count: { $sum: 1 }
