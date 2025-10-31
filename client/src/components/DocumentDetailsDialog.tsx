@@ -27,7 +27,10 @@ export function DocumentDetailsDialog({
   if (!document) return null;
 
   const documentLines = document.Payload?.DocumentLines || [];
-  const hasError = document.Status === "FAILED" && document.Error;
+  const lastErrorMessage = document.messages_error && document.messages_error.length > 0 
+    ? document.messages_error[document.messages_error.length - 1] 
+    : null;
+  const hasError = document.Status === "FAILED" && (lastErrorMessage || document.Error);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -100,9 +103,20 @@ export function DocumentDetailsDialog({
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Error Details</AlertTitle>
               <AlertDescription>
-                <pre className="mt-2 text-xs whitespace-pre-wrap font-mono" data-testid="detail-error">
-                  {document.Error}
-                </pre>
+                {lastErrorMessage ? (
+                  <div className="mt-2 space-y-2">
+                    <pre className="text-xs whitespace-pre-wrap font-mono" data-testid="detail-error">
+                      {lastErrorMessage.message}
+                    </pre>
+                    <div className="text-xs text-muted-foreground">
+                      Attempt {lastErrorMessage.attempt} • {new Date(lastErrorMessage.timestamp).toLocaleString()}
+                    </div>
+                  </div>
+                ) : (
+                  <pre className="mt-2 text-xs whitespace-pre-wrap font-mono" data-testid="detail-error">
+                    {document.Error}
+                  </pre>
+                )}
               </AlertDescription>
             </Alert>
           )}

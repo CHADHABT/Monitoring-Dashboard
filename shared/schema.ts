@@ -44,6 +44,11 @@ export const documentSchema = z.object({
   Last_updated: z.string().optional(),
   Error: z.string().optional(),
   FileName: z.string().optional(),
+  messages_error: z.array(z.object({
+    message: z.string(),
+    timestamp: z.string(),
+    attempt: z.number(),
+  })).optional(),
 });
 
 export type Document = z.infer<typeof documentSchema>;

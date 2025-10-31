@@ -175,6 +175,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           { 
             $set: { 
               Payload: payload,
+              Status: "OPEN",
               Last_updated: new Date().toISOString()
             } 
           }
